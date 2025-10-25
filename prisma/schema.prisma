@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Nabor {
+  id          String        @id @default(uuid())
+  name        String
+  description String
+  image       String
+  has_manual  Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Materials   Materials[]
+  Accessories Accessories[]
+  Furnitures  Furnitures[]
+  Andozalar   Andozalar[]
+  orderItems  OrderItem[]
+  Comments    Comment[]
+}
+
+model Materials {
+  id          String        @id @default(uuid())
+  naborId     String
+  nabor       Nabor         @relation(fields: [naborId], references: [id], onDelete: Cascade)
+  type        MaterialsType
+  description String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+enum MaterialsType {
+  TRIKOTAJ
+  ASTARLIK
+  PAXTALIK
+}
+
+model Accessories {
+  id        String   @id @default(uuid())
+  naborId   String
+  nabor     Nabor    @relation(fields: [naborId], references: [id], onDelete: Cascade)
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Furnitures {
+  id        String   @id @default(uuid())
+  naborId   String
+  nabor     Nabor    @relation(fields: [naborId], references: [id], onDelete: Cascade)
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Andozalar {
+  id        String   @id @default(uuid())
+  naborId   String
+  nabor     Nabor    @relation(fields: [naborId], references: [id], onDelete: Cascade)
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  fullName    String
+  phoneNumber String
+  location    String
+  status      OrderStatus @default(PENDING)
+  totalPrice  Int
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  naborId   String
+  nabor     Nabor    @relation(fields: [naborId], references: [id], onDelete: Cascade)
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Faq {
+  id        String   @id @default(uuid())
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  name      String
+  message   String
+  rating    Int      @default(5)
+  naborId   String
+  nabor     Nabor    @relation(fields: [naborId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
