@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateNaborDto } from './dto/create-nabor.dto';
 import { UpdateNaborDto } from './dto/update-nabor.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { realpath } from 'fs';
 
 @Injectable()
 export class NaborService {
-  create(createNaborDto: CreateNaborDto) {
-    return 'This action adds a new nabor';
+  constructor(private readonly prisma: PrismaService) {}
+  async create(data: CreateNaborDto) {
+    const created = await this.prisma.nabor.create({ data });
+    return created;
   }
 
-  findAll() {
-    return `This action returns all nabor`;
+  async findAll() {
+    const data = await this.prisma.nabor.findMany();
+    return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} nabor`;
+  async findOne(id: string) {
+    const one = await this.prisma.nabor.findUnique({ where: { id } });
+    if (!one) {
+      throw new NotFoundException('nabot topilmadi');
+    }
+    return one;
   }
 
-  update(id: number, updateNaborDto: UpdateNaborDto) {
-    return `This action updates a #${id} nabor`;
+  async update(id: string, data: UpdateNaborDto) {
+    await this.findOne(id);
+    const updated = await this.prisma.nabor.update({ where: { id }, data });
+    return updated;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} nabor`;
+  async remove(id: string) {
+    await this.findOne(id);
+    const deleted = await this.prisma.nabor.delete({ where: { id } });
+    return deleted;
   }
 }
