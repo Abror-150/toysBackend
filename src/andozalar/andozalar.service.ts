@@ -36,7 +36,7 @@ export class AndozalarService {
       where: { id },
       include: {
         nabor: true,
-      },
+      },  
     });
 
     if (!andoza) {
