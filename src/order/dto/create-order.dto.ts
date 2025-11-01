@@ -49,15 +49,6 @@ export class CreateOrderDto {
   @IsNotEmpty()
   location: string;
 
-  @ApiProperty({
-    enum: OrderStatus,
-    example: OrderStatus.PENDING,
-    description: 'Buyurtma holati (default: PENDING)',
-    required: false,
-  })
-  @IsEnum(OrderStatus)
-  status?: OrderStatus;
-
   @ApiProperty({ example: 150000, description: 'Buyurtmaning umumiy narxi' })
   @IsInt()
   @Min(0)

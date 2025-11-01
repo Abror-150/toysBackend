@@ -6,26 +6,32 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import axios from 'axios';
+import { OrderStatus } from '@prisma/client';
 
 @Injectable()
 export class OrderService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createOrderDto: CreateOrderDto) {
-    const { fullName, phoneNumber, location, totalPrice, status, orderItems } =
+    const { fullName, phoneNumber, location, totalPrice, orderItems } =
       createOrderDto;
+
+    if (!orderItems || orderItems.length === 0)
+      throw new BadRequestException('orderItems bo‘sh bo‘lmasligi kerak');
 
     const one = await this.prisma.nabor.findUnique({
       where: { id: orderItems[0].naborId },
     });
-    if (!one) throw new BadRequestException('Nabor not found');
+    if (!one) throw new BadRequestException('Nabor topilmadi');
+
     const order = await this.prisma.order.create({
       data: {
         fullName,
         phoneNumber,
         location,
         totalPrice,
-        status,
+        status: OrderStatus.PENDING,
         orderItems: {
           create: orderItems.map((item) => ({
             naborId: item.naborId,
@@ -39,6 +45,37 @@ export class OrderService {
         },
       },
     });
+
+    const BOT_TOKEN = '8202198108:AAHVOgeiLCJ2Y_SDUG-y_dB-kn8MVcEHJmA';
+    const CHAT_ID = '-5043252829';
+
+    const productList = order.orderItems
+      .map((item) => `🧵 ${item.nabor.name} — ${item.quantity} dona`)
+      .join('\n');
+
+    const message = `
+🆕 *Yangi buyurtma keldi!*
+━━━━━━━━━━━━━━
+👤 Ism: ${order.fullName}
+📞 Telefon: ${order.phoneNumber}
+📍 Manzil: ${order.location}
+📦 Mahsulotlar:
+${productList}
+💰 Jami: ${order.totalPrice} so'm
+📦 Status: ${order.status}
+━━━━━━━━━━━━━━
+🕒 Sana: ${new Date().toLocaleString('uz-UZ')}
+`;
+
+    try {
+      await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        chat_id: CHAT_ID,
+        text: message,
+        parse_mode: 'Markdown',
+      });
+    } catch (err) {
+      console.error('Telegramga xabar yuborishda xatolik:', err.message);
+    }
 
     return order;
   }
