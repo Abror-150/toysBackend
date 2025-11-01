@@ -13,7 +13,57 @@ export class NaborService {
   }
 
   async findAll() {
-    const data = await this.prisma.nabor.findMany();
+    const data = await this.prisma.nabor.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        image: true,
+        has_manual: true,
+        createdAt: true,
+        updatedAt: true,
+
+        Materials: {
+          select: {
+            id: true,
+            type: true,
+            description: true,
+          },
+        },
+
+        Accessories: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+
+        Furnitures: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+
+        Andozalar: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+
+        Comments: {
+          select: {
+            id: true,
+            name: true,
+            message: true,
+            rating: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
     return data;
   }
 
