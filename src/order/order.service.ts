@@ -14,16 +14,27 @@ export class OrderService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createOrderDto: CreateOrderDto) {
-    const { fullName, phoneNumber, location, totalPrice, orderItems } =
+    const { fullName, phoneNumber, location, orderItems, oferta } =
       createOrderDto;
 
     if (!orderItems || orderItems.length === 0)
       throw new BadRequestException('orderItems bo‘sh bo‘lmasligi kerak');
 
-    const one = await this.prisma.nabor.findUnique({
-      where: { id: orderItems[0].naborId },
+    const naborIds = orderItems.map((item) => item.naborId);
+
+    const nabors = await this.prisma.nabor.findMany({
+      where: { id: { in: naborIds } },
+      select: { id: true, price: true },
     });
-    if (!one) throw new BadRequestException('Nabor topilmadi');
+
+    if (nabors.length !== naborIds.length)
+      throw new BadRequestException('Baʼzi naborlar topilmadi');
+
+    const totalPrice = orderItems.reduce((sum, item) => {
+      const nabor = nabors.find((n) => n.id === item.naborId);
+      if (!nabor) return sum;
+      return sum + Number(nabor.price) * item.quantity;
+    }, 0);
 
     const order = await this.prisma.order.create({
       data: {
@@ -32,6 +43,7 @@ export class OrderService {
         location,
         totalPrice,
         status: OrderStatus.PENDING,
+        oferta,
         orderItems: {
           create: orderItems.map((item) => ({
             naborId: item.naborId,
@@ -54,18 +66,19 @@ export class OrderService {
       .join('\n');
 
     const message = `
-🆕 *Yangi buyurtma keldi!*
-━━━━━━━━━━━━━━
-👤 Ism: ${order.fullName}
-📞 Telefon: ${order.phoneNumber}
-📍 Manzil: ${order.location}
-📦 Mahsulotlar:
-${productList}
-💰 Jami: ${order.totalPrice} so'm
-📦 Status: ${order.status}
-━━━━━━━━━━━━━━
-🕒 Sana: ${new Date().toLocaleString('uz-UZ')}
-`;
+  🆕 *Yangi buyurtma keldi!*
+  ━━━━━━━━━━━━━━
+  👤 Ism: ${order.fullName}
+  📞 Telefon: ${order.phoneNumber}
+  📍 Manzil: ${order.location}
+  📦 Mahsulotlar:
+  ${productList}
+  💰 Jami: ${totalPrice.toLocaleString('uz-UZ')} so'm
+  📦 Status: ${order.status}
+   oferta:${order.oferta}
+  ━━━━━━━━━━━━━━
+  🕒 Sana: ${new Date().toLocaleString('uz-UZ')}
+  `;
 
     try {
       await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {

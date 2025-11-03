@@ -8,8 +8,17 @@ import { realpath } from 'fs';
 export class NaborService {
   constructor(private readonly prisma: PrismaService) {}
   async create(data: CreateNaborDto) {
-    const created = await this.prisma.nabor.create({ data });
-    return created;
+    const { price, ...res } = data;
+    const created = await this.prisma.nabor.create({
+      data: {
+        ...res,
+        price: Number(price),
+      },
+    });
+    return {
+      ...created,
+      price: Number(created.price),
+    };
   }
 
   async findAll() {
@@ -26,6 +35,7 @@ export class NaborService {
         has_manual: true,
         createdAt: true,
         updatedAt: true,
+        price: true,
 
         Materials: {
           select: {
@@ -76,7 +86,10 @@ export class NaborService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return data;
+    return data.map((item) => ({
+      ...item,
+      price: Number(item.price),
+    }));
   }
 
   async findOne(id: string) {

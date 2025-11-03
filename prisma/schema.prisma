@@ -15,6 +15,7 @@ model Nabor {
   description_uz String?
   description_ru String?
   description_en String?
+  price          Decimal       @default(0.0)
   image          String
   has_manual     Boolean       @default(false)
   createdAt      DateTime      @default(now())
@@ -83,6 +84,7 @@ model Order {
   fullName    String
   phoneNumber String
   location    String
+  oferta      Boolean     @default(false)
   status      OrderStatus @default(PENDING)
   totalPrice  Int
   orderItems  OrderItem[]

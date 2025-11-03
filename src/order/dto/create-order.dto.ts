@@ -8,6 +8,7 @@ import {
   ValidateNested,
   Min,
   ArrayMinSize,
+  IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { OrderStatus } from '@prisma/client';
@@ -49,10 +50,12 @@ export class CreateOrderDto {
   @IsNotEmpty()
   location: string;
 
-  @ApiProperty({ example: 150000, description: 'Buyurtmaning umumiy narxi' })
-  @IsInt()
-  @Min(0)
-  totalPrice: number;
+  @ApiProperty({
+    example: false,
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  oferta: boolean;
 
   @ApiProperty({
     type: [OrderItemDto],

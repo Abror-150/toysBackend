@@ -2,9 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUrl,
+  Min,
 } from 'class-validator';
 
 export class CreateNaborDto {
@@ -31,6 +33,15 @@ export class CreateNaborDto {
   @IsString()
   @IsNotEmpty({ message: 'name bo‘sh bo‘lmasligi kerak' })
   name_en?: string;
+
+  @ApiProperty({
+    example: 99.99,
+    description: 'Mahsulotning narxi (so‘m yoki dollar ko‘rinishida)',
+    type: Number,
+  })
+  @IsNumber()
+  @Min(0)
+  price: number;
 
   @ApiProperty({
     example:
