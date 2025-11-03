@@ -25,5 +25,21 @@ export class CreateMaterialDto {
   })
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description_uz?: string;
+
+  @ApiProperty({
+    description: 'rus',
+    example: 'Yuqori sifatli trikotaj mato, bolalar kiyimi uchun mos.',
+  })
+  @IsString()
+  @IsNotEmpty()
+  description_ru?: string;
+
+  @ApiProperty({
+    description: 'english',
+    example: 'Yuqori sifatli trikotaj mato, bolalar kiyimi uchun mos.',
+  })
+  @IsString()
+  @IsNotEmpty()
+  description_en?: string;
 }

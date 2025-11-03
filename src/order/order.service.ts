@@ -50,7 +50,7 @@ export class OrderService {
     const CHAT_ID = '-5043252829';
 
     const productList = order.orderItems
-      .map((item) => `🧵 ${item.nabor.name} — ${item.quantity} dona`)
+      .map((item) => `🧵 ${item.nabor.name_uz} — ${item.quantity} dona`)
       .join('\n');
 
     const message = `

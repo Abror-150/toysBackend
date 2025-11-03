@@ -16,5 +16,21 @@ export class CreateFurnitureDto {
   })
   @IsString({ message: 'name faqat matn bo‘lishi kerak' })
   @IsNotEmpty({ message: 'name bo‘sh bo‘lmasligi kerak' })
-  name: string;
+  name_uz: string;
+
+  @ApiProperty({
+    example: 'ruscha',
+    description: 'Furniture nomi',
+  })
+  @IsString({ message: 'name faqat matn bo‘lishi kerak' })
+  @IsNotEmpty({ message: 'name bo‘sh bo‘lmasligi kerak' })
+  name_ru?: string;
+
+  @ApiProperty({
+    example: 'inglizcha',
+    description: 'Furniture nomi',
+  })
+  @IsString({ message: 'name faqat matn bo‘lishi kerak' })
+  @IsNotEmpty({ message: 'name bo‘sh bo‘lmasligi kerak' })
+  name_en?: string;
 }

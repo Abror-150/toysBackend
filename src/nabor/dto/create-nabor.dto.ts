@@ -14,7 +14,23 @@ export class CreateNaborDto {
   })
   @IsString()
   @IsNotEmpty({ message: 'name bo‘sh bo‘lmasligi kerak' })
-  name: string;
+  name_uz?: string;
+
+  @ApiProperty({
+    example: 'Набор мягких игрушек',
+    description: 'Набор',
+  })
+  @IsString()
+  @IsNotEmpty({ message: 'name bo‘sh bo‘lmasligi kerak' })
+  name_ru?: string;
+
+  @ApiProperty({
+    example: 'hello',
+    description: 'n',
+  })
+  @IsString()
+  @IsNotEmpty({ message: 'name bo‘sh bo‘lmasligi kerak' })
+  name_en?: string;
 
   @ApiProperty({
     example:
@@ -23,7 +39,23 @@ export class CreateNaborDto {
   })
   @IsString()
   @IsNotEmpty({ message: 'description kiritilishi kerak' })
-  description: string;
+  description_uz?: string;
+
+  @ApiProperty({
+    example: 'ruscha',
+    description: 'Nabor haqida to‘liq ma’lumot',
+  })
+  @IsString()
+  @IsNotEmpty({ message: 'description kiritilishi kerak' })
+  description_ru?: string;
+
+  @ApiProperty({
+    example: 'english what up man',
+    description: 'Nabor haqida to‘liq ma’lumot',
+  })
+  @IsString()
+  @IsNotEmpty({ message: 'description kiritilishi kerak' })
+  description_en?: string;
 
   @ApiProperty({
     example: 'https://example.com/uploads/toy-set.jpg',

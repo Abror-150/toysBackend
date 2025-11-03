@@ -16,8 +16,12 @@ export class NaborService {
     const data = await this.prisma.nabor.findMany({
       select: {
         id: true,
-        name: true,
-        description: true,
+        name_en: true,
+        name_ru: true,
+        name_uz: true,
+        description_uz: true,
+        description_ru: true,
+        description_en: true,
         image: true,
         has_manual: true,
         createdAt: true,
@@ -27,28 +31,36 @@ export class NaborService {
           select: {
             id: true,
             type: true,
-            description: true,
+            description_en: true,
+            description_ru: true,
+            description_uz: true,
           },
         },
 
         Accessories: {
           select: {
             id: true,
-            name: true,
+            name_en: true,
+            name_ru: true,
+            name_uz: true,
           },
         },
 
         Furnitures: {
           select: {
             id: true,
-            name: true,
+            name_en: true,
+            name_ru: true,
+            name_uz: true,
           },
         },
 
         Andozalar: {
           select: {
             id: true,
-            name: true,
+            name_en: true,
+            name_ru: true,
+            name_uz: true,
           },
         },
 

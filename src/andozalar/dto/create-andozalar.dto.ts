@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID, Length } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
 
 export class CreateAndozalarDto {
   @ApiProperty({
@@ -16,5 +16,21 @@ export class CreateAndozalarDto {
   })
   @IsString()
   @Length(2, 100, { message: 'Nomi 2–100 ta belgi oralig‘ida bo‘lishi kerak' })
-  name: string;
+  name_uz: string;
+
+  @ApiProperty({
+    description: 'ruscha',
+    example: 'Qo‘shimcha batareya',
+  })
+  @IsNotEmpty({ message: 'name bo‘sh bo‘lmasligi kerak' })
+  @IsString({ message: 'name string formatda bo‘lishi kerak' })
+  name_ru?: string;
+
+  @ApiProperty({
+    description: 'inglizcha',
+    example: 'Qo‘shimcha batareya',
+  })
+  @IsNotEmpty({ message: 'name bo‘sh bo‘lmasligi kerak' })
+  @IsString({ message: 'name string formatda bo‘lishi kerak' })
+  name_en?: string;
 }
