@@ -23,6 +23,18 @@ export class NaborService {
 
   async findAll() {
     const data = await this.prisma.nabor.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return data.map((item) => ({
+      ...item,
+      price: Number(item.price),
+    }));
+  }
+
+  async findOne(id: string) {
+    const one = await this.prisma.nabor.findUnique({
+      where: { id },
       select: {
         id: true,
         name_en: true,
@@ -83,17 +95,7 @@ export class NaborService {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
     });
-
-    return data.map((item) => ({
-      ...item,
-      price: Number(item.price),
-    }));
-  }
-
-  async findOne(id: string) {
-    const one = await this.prisma.nabor.findUnique({ where: { id } });
     if (!one) {
       throw new NotFoundException('nabot topilmadi');
     }
