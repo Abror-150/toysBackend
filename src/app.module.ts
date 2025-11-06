@@ -9,9 +9,10 @@ import { FurnituresModule } from './furnitures/furnitures.module';
 import { AndozalarModule } from './andozalar/andozalar.module';
 import { OrderModule } from './order/order.module';
 import { UploadController } from './upload/upload.controller';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
-  imports: [NaborModule, PrismaModule, MaterialsModule, AccessoriesModule, FurnituresModule, AndozalarModule, OrderModule],
+  imports: [NaborModule, PrismaModule, MaterialsModule, AccessoriesModule, FurnituresModule, AndozalarModule, OrderModule, ContactModule],
   controllers: [AppController, UploadController],
   providers: [AppService],
 })

@@ -94,14 +94,76 @@ export class OrderService {
   }
 
   async findAll() {
-    return this.prisma.order.findMany({
-      include: {
-        orderItems: {
-          include: { nabor: true },
+    const [data, totalOrders] = await Promise.all([
+      this.prisma.order.findMany({
+        include: {
+          orderItems: {
+            include: { nabor: true },
+          },
         },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.order.count(),
+    ]);
+
+    const [pending, confirmed, shipped, delivered, cancelled] =
+      await Promise.all([
+        this.prisma.order.count({ where: { status: 'PENDING' } }),
+        this.prisma.order.count({ where: { status: 'CONFIRMED' } }),
+        this.prisma.order.count({ where: { status: 'SHIPPED' } }),
+        this.prisma.order.count({ where: { status: 'DELIVERED' } }),
+        this.prisma.order.count({ where: { status: 'CANCELLED' } }),
+      ]);
+
+    return {
+      totalOrders,
+      statusCounts: {
+        pending,
+        confirmed,
+        shipped,
+        delivered,
+        cancelled,
       },
-      orderBy: { createdAt: 'desc' },
+      data,
+    };
+  }
+
+  async getStats() {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const startOfLastMonth = new Date(startOfMonth);
+    startOfLastMonth.setMonth(startOfMonth.getMonth() - 1);
+
+    const currentMonthOrders = await this.prisma.order.findMany({
+      where: { createdAt: { gte: startOfMonth } },
     });
+
+    const lastMonthOrders = await this.prisma.order.findMany({
+      where: {
+        createdAt: { gte: startOfLastMonth, lt: startOfMonth },
+      },
+    });
+
+    const currentRevenue = currentMonthOrders.reduce(
+      (sum, order) => sum + Number(order.totalPrice || 0),
+      0,
+    );
+    const lastRevenue = lastMonthOrders.reduce(
+      (sum, order) => sum + Number(order.totalPrice || 0),
+      0,
+    );
+
+    const growth =
+      lastRevenue === 0
+        ? 100
+        : ((currentRevenue - lastRevenue) / lastRevenue) * 100;
+
+    return {
+      monthlyRevenue: `$${currentRevenue.toLocaleString()}`,
+      growth: `+${growth.toFixed(1)}%`,
+    };
   }
 
   async findOne(id: string) {

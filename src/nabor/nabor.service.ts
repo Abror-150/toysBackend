@@ -22,14 +22,22 @@ export class NaborService {
   }
 
   async findAll() {
-    const data = await this.prisma.nabor.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
+    const [data, totalNabor] = await Promise.all([
+      this.prisma.nabor.findMany({
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.nabor.count(),
+    ]);
 
-    return data.map((item) => ({
+    const formattedData = data.map((item) => ({
       ...item,
       price: Number(item.price),
     }));
+
+    return {
+      totalNabor,
+      data: formattedData,
+    };
   }
 
   async findOne(id: string) {
