@@ -21,6 +21,6 @@ async function bootstrap() {
   });
   app.use('/images', express.static(path.join(process.cwd(), 'images')));
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 4000);
 }
 bootstrap();
